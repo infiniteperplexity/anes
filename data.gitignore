@@ -1,0 +1,6 @@
+# zip files
+*.zip
+
+# data subfolder
+
+data/
