@@ -1,0 +1,28 @@
+import numpy as np
+saspath = 'C:/Users/Glenn/Documents/GitHub/anes/sas/'
+datapath = 'C:/Users/Glenn/Documents/GitHub/anes/data/'
+with open(saspath+"anes_timeseries_2016_varlabels.sas") as f:
+  lines = f.readlines()[1:-1]
+  v1 = [line.split(" = ") for line in lines]
+  v2 = [(line[0].strip(),line[1].replace("\n","").replace('"',"")) for line in v1]
+  varnames = dict(v2)
+
+with open(saspath+"anes_timeseries_2016_codelabelsdefine.sas") as f:
+  lines = f.readlines()
+
+valnames = {}
+for line in lines:
+  if "VALUE" in line:
+    varname = line.split()[1].replace("_","")
+    valnames[varname] = {}
+  elif ";" not in line:
+    splt = line.split()
+    try:
+      val = int(splt[2].replace('"',"").replace(".",""))
+    except:
+      val = np.nan
+    desc = " ".join(splt[3:]).replace('"',"")
+    valnames[varname][val] = desc
+
+import pandas as pd
+pdata = pd.read_table(datapath+"anes_timeseries_2016_rawdata.txt", sep='|')
